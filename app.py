@@ -330,6 +330,7 @@ html_code = """
 </script>
 """
 
+
 # Add audio player with base64 encoded music
 if music_data:
     audio_html = f'''
