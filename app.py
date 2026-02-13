@@ -1,27 +1,45 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import base64
 
 st.set_page_config(page_title="Will You Be My Valentine?", layout="centered", initial_sidebar_state="collapsed")
 
+# Load and encode the music file
+try:
+    with open("music/Music.mp3", "rb") as f:
+        music_data = base64.b64encode(f.read()).decode()
+except:
+    music_data = ""
+
 html_code = """
 <style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #ffb3d9 !important;
+    }
+    
     * { box-sizing: border-box; }
     
     body {
         margin: 0;
         padding: 0;
         min-height: 100vh;
+        width: 100vw;
+        height: 100vh;
         display: grid;
         place-items: center;
-        background: linear-gradient(135deg, #ff006e 0%, #fb5607 100%);
+        background: #ffb3d9 !important;
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
         color: #222;
         overflow: hidden;
     }
 
     .card {
-        width: min(720px, 92vw);
-        height: min(480px, 68vh);
+        width: min(800px, 92vw);
+        height: min(550px, 75vh);
         background: #f5f5f5;
         border-radius: 18px;
         box-shadow: 0 12px 35px rgba(0,0,0,.18);
@@ -36,12 +54,12 @@ html_code = """
     }
 
     h1 {
-        margin: 0;
+        margin: -5px 0 5px 0;
         text-align: center;
         font-weight: 800;
         letter-spacing: -0.4px;
         font-size: clamp(22px, 3vw, 34px);
-        color: #222;
+        color: #ff2e7a;
     }
 
     .actions {
@@ -106,21 +124,93 @@ html_code = """
     .note {
         position: absolute;
         bottom: 14px;
-        font-size: 12px;
+        font-size: 15px;
         color: #666;
         opacity: .9;
+    }
+
+    .card-heart {
+        position: absolute;
+        font-size: 2rem;
+        pointer-events: none;
+        animation: rise 3s ease-out infinite;
+    }
+
+    @keyframes rise {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0;
+        }
+        5% {
+            opacity: 0.8;
+        }
+        90% {
+            opacity: 0.8;
+        }
+        100% {
+            transform: translateY(-200px) rotate(360deg);
+            opacity: 0;
+        }
+    }
+
+    .card-heart:nth-child(1) { animation-delay: 0s; bottom: -50px; left: 5%; }
+    .card-heart:nth-child(2) { animation-delay: 1s; bottom: -50px; left: 15%; }
+    .card-heart:nth-child(3) { animation-delay: 2s; bottom: -50px; left: 25%; }
+    .card-heart:nth-child(4) { animation-delay: 3s; bottom: -50px; left: 35%; }
+    .card-heart:nth-child(5) { animation-delay: 4s; bottom: -50px; left: 45%; }
+    .card-heart:nth-child(6) { animation-delay: 5s; bottom: -50px; left: 55%; }
+    .card-heart:nth-child(7) { animation-delay: 6s; bottom: -50px; left: 65%; }
+    .card-heart:nth-child(8) { animation-delay: 7s; bottom: -50px; left: 75%; }
+    .card-heart:nth-child(9) { animation-delay: 8s; bottom: -50px; left: 85%; }
+    .card-heart:nth-child(10) { animation-delay: 9s; bottom: -50px; left: 95%; }
+    .card-heart:nth-child(11) { animation-delay: 10s; bottom: -50px; left: 10%; }
+    .card-heart:nth-child(12) { animation-delay: 11s; bottom: -50px; left: 40%; }
+    
+    .audio-control {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 999;
+        background: #ff2e7a;
+        border: none;
+        color: white;
+        padding: 12px 16px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+        box-shadow: 0 4px 12px rgba(255, 46, 122, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .audio-control:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(255, 46, 122, 0.4);
     }
 </style>
 
 <div class="card" id="card">
+    <p style="font-size: 18px; color: #333; margin: 0 0 5px 0; text-align: center;">Hey Juju-Bear, your Grej has a question for you.</p></p>
     <h1 id="title">Will you be my Valentine?</h1>
+    <p style="font-size: 14px; color: #222; margin: 0 0 10px 0; text-align: center; font-style: italic;">good luck saying no wink wink 😉</p>
 
     <div class="actions" id="actions">
-        <button id="yesBtn" type="button">Yes</button>
-        <button id="noBtn" type="button">No</button>
+        <button id="yesBtn" type="button">Yes 💘</button>
+        <button id="noBtn" type="button">No 😭</button>
     </div>
 
     <div class="note" id="note">"No" seems a bit shy 😈</div>
+    <div class="card-heart">❤️</div>
+    <div class="card-heart">❤️</div>
+    <div class="card-heart">❤️</div>
+    <div class="card-heart">❤️</div>
+    <div class="card-heart">❤️</div>
+    <div class="card-heart">❤️</div>
+    <div class="card-heart">❤️</div>
+    <div class="card-heart">❤️</div>
+    <div class="card-heart">❤️</div>
+    <div class="card-heart">❤️</div>
+    <div class="card-heart">❤️</div>
+    <div class="card-heart">❤️</div>
 </div>
 
 <script>
@@ -241,3 +331,55 @@ html_code = """
 """
 
 components.html(html_code, height=600)
+
+# Add audio player with base64 encoded music
+if music_data:
+    audio_html = f'''
+    <audio id="bgMusic" autoplay loop style="display:none;">
+        <source src="data:audio/mpeg;base64,{music_data}" type="audio/mpeg">
+    </audio>
+    <button id="bgAudioToggle" style="position: fixed; bottom: 30px; right: 30px; z-index: 999; background: #ff2e7a; border: none; color: white; padding: 12px 16px; border-radius: 50%; cursor: pointer; font-size: 20px; box-shadow: 0 4px 12px rgba(255, 46, 122, 0.3); transition: all 0.3s ease;">🔊</button>
+    <script>
+        const audio = document.getElementById('bgMusic');
+        const btn = document.getElementById('bgAudioToggle');
+        audio.play().catch(err => {{
+            audio.muted = true;
+            audio.play();
+        }});
+        btn.onclick = function() {{
+            if (audio.paused) {{
+                audio.play();
+                btn.textContent = '🔊';
+            }} else {{
+                audio.pause();
+                btn.textContent = '🔇';
+            }}
+        }};
+    </script>
+    '''
+    st.markdown(audio_html, unsafe_allow_html=True)
+
+# Navigation button to gallery
+st.markdown("<div style='text-align: center; margin-top: 30px;'></div>", unsafe_allow_html=True)
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
+    if st.button("Go to our Memories  💕", use_container_width=True, key="nav_to_gallery"):
+        st.switch_page("pages/1_Gallery.py")
+
+# Hide Streamlit default UI elements and set background
+st.markdown("""
+<style>
+    [data-testid="stAppViewContainer"] {
+        background-color: #ffb3d9 !important;
+    }
+    [data-testid="stHeader"] {
+        background-color: #ffb3d9 !important;
+    }
+    .stApp {
+        background-color: #ffb3d9 !important;
+    }
+    body, html {
+        background-color: #ffb3d9 !important;
+    }
+</style>
+""", unsafe_allow_html=True)
