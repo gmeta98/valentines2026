@@ -1,8 +1,21 @@
+"""
+Valentine's Day Interactive Card Application
+
+A fun and interactive Valentine's Day card built with Streamlit.
+Features a playful interface where the "No" button runs away from the cursor!
+"""
+
 import streamlit as st
 import streamlit.components.v1 as components
 
-st.set_page_config(page_title="Will You Be My Valentine?", layout="centered", initial_sidebar_state="collapsed")
+# Configure the Streamlit page
+st.set_page_config(
+    page_title="Will You Be My Valentine?", 
+    layout="centered", 
+    initial_sidebar_state="collapsed"
+)
 
+# HTML, CSS, and JavaScript code for the interactive Valentine card
 html_code = """
 <style>
     * { box-sizing: border-box; }
@@ -124,8 +137,10 @@ html_code = """
 </div>
 
 <script>
+    // Helper function to clamp a value between min and max
     const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
     
+    // Array of funny messages that appear when trying to click "No"
     const funnyMessages = [
         '"No" seems a bit shy 😈',
         'Gotta catch that "No" 🏃‍♂️',
@@ -144,22 +159,26 @@ html_code = """
         '"No" has abandonment issues 😅'
     ];
 
+    // Main setup function for the "No" button behavior
     function setupNoButton() {
         const yesBtn = document.getElementById("yesBtn");
         const noBtn = document.getElementById("noBtn");
         const actions = document.getElementById("actions");
         const note = document.getElementById("note");
 
+        // Wait for DOM elements to be ready
         if (!yesBtn || !noBtn || !actions) {
             setTimeout(setupNoButton, 100);
             return;
         }
 
+        // Update the message with a random funny quote
         function updateMessage() {
             const randomMsg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
             note.textContent = randomMsg;
         }
 
+        // Position the "No" button on top of "Yes" button initially
         function placeNoInitial() {
             const a = actions.getBoundingClientRect();
             const yesRect = yesBtn.getBoundingClientRect();
@@ -178,6 +197,7 @@ html_code = """
             noBtn.style.height = `${Math.max(b.height, yesRect.height)}px`;
         }
 
+        // Move the "No" button away from cursor position
         function moveNoAway(fromX, fromY) {
             const a = actions.getBoundingClientRect();
             const b = noBtn.getBoundingClientRect();
@@ -193,6 +213,7 @@ html_code = """
 
             let best = { x: Math.random() * (maxX - minX) + minX, y: Math.random() * (maxY - minY) + minY, d: -1 };
 
+            // Try multiple random positions and pick the one farthest from cursor
             for (let i = 0; i < 18; i++) {
                 const x = Math.random() * (maxX - minX) + minX;
                 const y = Math.random() * (maxY - minY) + minY;
@@ -207,11 +228,14 @@ html_code = """
             updateMessage();
         }
 
+        // Distance threshold for when "No" button should run away
         const RUN_DISTANCE = 160;
 
+        // Initialize button positions
         placeNoInitial();
         window.addEventListener("resize", placeNoInitial);
 
+        // Track mouse movement and move "No" button if cursor gets too close
         actions.addEventListener("mousemove", (e) => {
             const nb = noBtn.getBoundingClientRect();
             const dist = Math.hypot(
@@ -221,12 +245,14 @@ html_code = """
             if (dist < RUN_DISTANCE) moveNoAway(e.clientX, e.clientY);
         });
 
+        // Additional event listeners for touch/pointer devices
         noBtn.addEventListener("pointerenter", (e) => moveNoAway(e.clientX, e.clientY));
         noBtn.addEventListener("pointerdown", (e) => {
             e.preventDefault();
             moveNoAway(e.clientX, e.clientY);
         });
 
+        // Handle "Yes" button click - show success message
         yesBtn.addEventListener("click", () => {
             document.getElementById("title").textContent = "YAYYYYY 💖";
             note.textContent = "Best decision ever! 😍";
@@ -235,9 +261,11 @@ html_code = """
         });
     }
 
+    // Initialize when page loads
     window.addEventListener("load", setupNoButton);
     setupNoButton();
 </script>
 """
 
+# Render the HTML component with the Valentine's card
 components.html(html_code, height=600)
