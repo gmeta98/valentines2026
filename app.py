@@ -1,25 +1,50 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import os
+from pathlib import Path
 
-st.set_page_config(page_title="Will You Be My Valentine?", layout="centered", initial_sidebar_state="collapsed")
+# Load environment variables from .env file if it exists
+env_path = Path(__file__).parent / '.env'
+if env_path.exists():
+    with open(env_path) as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, value = line.split('=', 1)
+                os.environ.setdefault(key.strip(), value.strip())
 
-html_code = """
+# Get configuration from environment variables with defaults
+PAGE_TITLE = os.getenv('PAGE_TITLE', 'Will You Be My Valentine?')
+PRIMARY_COLOR = os.getenv('PRIMARY_COLOR', '#ff2e7a')
+SECONDARY_COLOR = os.getenv('SECONDARY_COLOR', '#e63b3b')
+GRADIENT_START = os.getenv('BACKGROUND_GRADIENT_START', '#ff006e')
+GRADIENT_END = os.getenv('BACKGROUND_GRADIENT_END', '#fb5607')
+QUESTION_TEXT = os.getenv('QUESTION_TEXT', 'Will you be my Valentine?')
+YES_TEXT = os.getenv('YES_TEXT', 'Yes')
+NO_TEXT = os.getenv('NO_TEXT', 'No')
+SUCCESS_MESSAGE = os.getenv('SUCCESS_MESSAGE', 'YAYYYYY 💖')
+SUCCESS_NOTE = os.getenv('SUCCESS_NOTE', 'Best decision ever! 😍')
+FOOTER_NOTE = os.getenv('FOOTER_NOTE', '"No" seems a bit shy 😈')
+
+st.set_page_config(page_title=PAGE_TITLE, layout="centered", initial_sidebar_state="collapsed")
+
+html_code = f"""
 <style>
-    * { box-sizing: border-box; }
+    * {{ box-sizing: border-box; }}
     
-    body {
+    body {{
         margin: 0;
         padding: 0;
         min-height: 100vh;
         display: grid;
         place-items: center;
-        background: linear-gradient(135deg, #ff006e 0%, #fb5607 100%);
+        background: linear-gradient(135deg, {GRADIENT_START} 0%, {GRADIENT_END} 100%);
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
         color: #222;
         overflow: hidden;
-    }
+    }}
 
-    .card {
+    .card {{
         width: min(720px, 92vw);
         height: min(480px, 68vh);
         background: #f5f5f5;
@@ -33,18 +58,18 @@ html_code = """
         padding: 28px 22px 30px;
         gap: 16px;
         overflow: hidden;
-    }
+    }}
 
-    h1 {
+    h1 {{
         margin: 0;
         text-align: center;
         font-weight: 800;
         letter-spacing: -0.4px;
         font-size: clamp(22px, 3vw, 34px);
         color: #222;
-    }
+    }}
 
-    .actions {
+    .actions {{
         width: 100%;
         display: flex;
         align-items: center;
@@ -53,9 +78,9 @@ html_code = """
         margin-top: 10px;
         position: relative;
         height: 90px;
-    }
+    }}
 
-    button {
+    button {{
         border: 0;
         cursor: pointer;
         font-weight: 800;
@@ -63,29 +88,29 @@ html_code = """
         transition: transform .12s ease, filter .12s ease, background .12s ease;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
-    }
+    }}
 
-    #yesBtn {
-        background: #ff2e7a;
+    #yesBtn {{
+        background: {PRIMARY_COLOR};
         color: white;
         padding: 18px 44px;
         font-size: 20px;
         box-shadow: 0 14px 26px rgba(255,46,122,.28);
         position: relative;
         z-index: 2;
-    }
+    }}
 
-    #yesBtn:hover {
+    #yesBtn:hover {{
         background: #ff0f66;
         transform: translateY(-1px) scale(1.02);
-    }
+    }}
 
-    #yesBtn:active {
+    #yesBtn:active {{
         transform: translateY(1px) scale(.98);
-    }
+    }}
 
-    #noBtn {
-        background: #e63b3b;
+    #noBtn {{
+        background: {SECONDARY_COLOR};
         color: white;
         padding: 18px 44px;
         font-size: 20px;
@@ -101,26 +126,26 @@ html_code = """
         display: inline-flex;
         align-items: center;
         justify-content: center;
-    }
+    }}
 
-    .note {
+    .note {{
         position: absolute;
         bottom: 14px;
         font-size: 12px;
         color: #666;
         opacity: .9;
-    }
+    }}
 </style>
 
 <div class="card" id="card">
-    <h1 id="title">Will you be my Valentine?</h1>
+    <h1 id="title">{QUESTION_TEXT}</h1>
 
     <div class="actions" id="actions">
-        <button id="yesBtn" type="button">Yes</button>
-        <button id="noBtn" type="button">No</button>
+        <button id="yesBtn" type="button">{YES_TEXT}</button>
+        <button id="noBtn" type="button">{NO_TEXT}</button>
     </div>
 
-    <div class="note" id="note">"No" seems a bit shy 😈</div>
+    <div class="note" id="note">{FOOTER_NOTE}</div>
 </div>
 
 <script>
@@ -144,23 +169,23 @@ html_code = """
         '"No" has abandonment issues 😅'
     ];
 
-    function setupNoButton() {
+    function setupNoButton() {{
         const yesBtn = document.getElementById("yesBtn");
         const noBtn = document.getElementById("noBtn");
         const actions = document.getElementById("actions");
         const note = document.getElementById("note");
 
-        if (!yesBtn || !noBtn || !actions) {
+        if (!yesBtn || !noBtn || !actions) {{
             setTimeout(setupNoButton, 100);
             return;
-        }
+        }}
 
-        function updateMessage() {
+        function updateMessage() {{
             const randomMsg = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
             note.textContent = randomMsg;
-        }
+        }}
 
-        function placeNoInitial() {
+        function placeNoInitial() {{
             const a = actions.getBoundingClientRect();
             const yesRect = yesBtn.getBoundingClientRect();
             const b = noBtn.getBoundingClientRect();
@@ -174,11 +199,11 @@ html_code = """
             noBtn.style.top = clamp(y, pad, a.height - b.height - pad) + 'px';
 
             // Make NO match YES size visually
-            noBtn.style.width = `${Math.max(b.width, yesRect.width)}px`;
-            noBtn.style.height = `${Math.max(b.height, yesRect.height)}px`;
-        }
+            noBtn.style.width = `${{Math.max(b.width, yesRect.width)}}px`;
+            noBtn.style.height = `${{Math.max(b.height, yesRect.height)}}px`;
+        }}
 
-        function moveNoAway(fromX, fromY) {
+        function moveNoAway(fromX, fromY) {{
             const a = actions.getBoundingClientRect();
             const b = noBtn.getBoundingClientRect();
             const pad = 10;
@@ -191,49 +216,49 @@ html_code = """
             const cx = fromX - a.left;
             const cy = fromY - a.top;
 
-            let best = { x: Math.random() * (maxX - minX) + minX, y: Math.random() * (maxY - minY) + minY, d: -1 };
+            let best = {{ x: Math.random() * (maxX - minX) + minX, y: Math.random() * (maxY - minY) + minY, d: -1 }};
 
-            for (let i = 0; i < 18; i++) {
+            for (let i = 0; i < 18; i++) {{
                 const x = Math.random() * (maxX - minX) + minX;
                 const y = Math.random() * (maxY - minY) + minY;
                 const dx = (x + b.width / 2) - cx;
                 const dy = (y + b.height / 2) - cy;
                 const d = Math.hypot(dx, dy);
-                if (d > best.d) best = { x, y, d };
-            }
+                if (d > best.d) best = {{ x, y, d }};
+            }}
 
             noBtn.style.left = clamp(best.x, minX, maxX) + 'px';
             noBtn.style.top = clamp(best.y, minY, maxY) + 'px';
             updateMessage();
-        }
+        }}
 
         const RUN_DISTANCE = 160;
 
         placeNoInitial();
         window.addEventListener("resize", placeNoInitial);
 
-        actions.addEventListener("mousemove", (e) => {
+        actions.addEventListener("mousemove", (e) => {{
             const nb = noBtn.getBoundingClientRect();
             const dist = Math.hypot(
                 (nb.left + nb.width / 2) - e.clientX,
                 (nb.top + nb.height / 2) - e.clientY
             );
             if (dist < RUN_DISTANCE) moveNoAway(e.clientX, e.clientY);
-        });
+        }});
 
         noBtn.addEventListener("pointerenter", (e) => moveNoAway(e.clientX, e.clientY));
-        noBtn.addEventListener("pointerdown", (e) => {
+        noBtn.addEventListener("pointerdown", (e) => {{
             e.preventDefault();
             moveNoAway(e.clientX, e.clientY);
-        });
+        }});
 
-        yesBtn.addEventListener("click", () => {
-            document.getElementById("title").textContent = "YAYYYYY 💖";
-            note.textContent = "Best decision ever! 😍";
+        yesBtn.addEventListener("click", () => {{
+            document.getElementById("title").textContent = "{SUCCESS_MESSAGE}";
+            note.textContent = "{SUCCESS_NOTE}";
             noBtn.disabled = true;
             noBtn.style.opacity = "0.25";
-        });
-    }
+        }});
+    }}
 
     window.addEventListener("load", setupNoButton);
     setupNoButton();
