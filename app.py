@@ -328,32 +328,36 @@ html_code = """
     window.addEventListener("load", setupNoButton);
     setupNoButton();
 </script>
-
-<audio id="bgMusic" autoplay loop style="display:none;">
-    <source src="data:audio/mpeg;base64,""" + music_data + """" type="audio/mpeg">
-</audio>
-
-<button id="bgAudioToggle" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; background: #ff2e7a; border: none; color: white; padding: 12px 16px; border-radius: 50%; cursor: pointer; font-size: 20px; box-shadow: 0 4px 12px rgba(255, 46, 122, 0.3); transition: all 0.3s ease;">🔊</button>
-
-<script>
-    const audio = document.getElementById('bgMusic');
-    const btn = document.getElementById('bgAudioToggle');
-    audio.play().catch(err => {
-        audio.muted = true;
-        audio.play();
-    });
-    btn.onclick = function() {
-        if (audio.paused) {
-            audio.play();
-            btn.textContent = '🔊';
-        } else {
-            audio.pause();
-            btn.textContent = '🔇';
-        }
-    };
-</script>
 """
+
 components.html(html_code, height=600)
+
+# Add audio player with base64 encoded music - AFTER components, just like Gallery
+if music_data:
+    audio_html = f'''
+    <audio id="bgMusic" autoplay loop style="display:none;">
+        <source src="data:audio/mpeg;base64,{music_data}" type="audio/mpeg">
+    </audio>
+    <button id="bgAudioToggle" style="position: fixed; bottom: 30px; right: 30px; z-index: 999; background: #ff2e7a; border: none; color: white; padding: 12px 16px; border-radius: 50%; cursor: pointer; font-size: 20px; box-shadow: 0 4px 12px rgba(255, 46, 122, 0.3); transition: all 0.3s ease;">🔊</button>
+    <script>
+        const audio = document.getElementById('bgMusic');
+        const btn = document.getElementById('bgAudioToggle');
+        audio.play().catch(err => {{
+            audio.muted = true;
+            audio.play();
+        }});
+        btn.onclick = function() {{
+            if (audio.paused) {{
+                audio.play();
+                btn.textContent = '🔊';
+            }} else {{
+                audio.pause();
+                btn.textContent = '🔇';
+            }}
+        }};
+    </script>
+    '''
+    st.markdown(audio_html, unsafe_allow_html=True)
 
 # Navigation button to gallery
 st.markdown("<div style='text-align: center; margin-top: 30px;'></div>", unsafe_allow_html=True)
